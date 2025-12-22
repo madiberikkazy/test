@@ -275,41 +275,170 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
+        .trophy-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
         .results-title {
             font-size: 2em;
             font-weight: bold;
             color: #333;
+            margin-bottom: 20px;
+        }
+
+        .results-subtitle {
+            font-size: 1.1em;
+            color: #666;
             margin-bottom: 30px;
         }
 
         .score {
-            font-size: 3em;
+            font-size: 4em;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 20px;
         }
 
-        .percentage {
+        .encouragement {
             font-size: 1.3em;
-            color: #666;
+            color: #ff9800;
             margin-bottom: 30px;
+        }
+
+        .results-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
         }
 
         .restart-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 18px 50px;
+            padding: 18px 40px;
             border-radius: 30px;
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 30px;
             transition: transform 0.3s;
         }
 
         .restart-btn:hover {
             transform: scale(1.05);
+        }
+
+        .home-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal for Jump to Question */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: #e0e0e0;
+            color: #333;
         }
 
         @media (max-width: 768px) {
@@ -328,6 +457,10 @@
             .question-text {
                 font-size: 1.2em;
             }
+
+            .results-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -339,9 +472,37 @@
         <div class="lesson-grid">
         
             <div class="lesson-card" onclick="selectLesson('musaif.txt', 'Философия', 'Философия')">
-                <div class="lesson-icon icon-teal">🧪</div>
+                <div class="lesson-icon icon-teal">🧠</div>
                 <div class="lesson-title">Философия</div>
                 <div class="lesson-subtitle">Философия</div>
+                <button class="start-btn">Бастау ▶</button>
+            </div>
+
+            <div class="lesson-card" onclick="selectLesson('musaif2.txt', 'Философия', 'Философия')">
+                <div class="lesson-icon icon-teal">🧠</div>
+                <div class="lesson-title">Философия</div>
+                <div class="lesson-subtitle">Философия 1-60</div>
+                <button class="start-btn">Бастау ▶</button>
+            </div>
+
+            <div class="lesson-card" onclick="selectLesson('musaif3.txt', 'Философия', 'Философия')">
+                <div class="lesson-icon icon-teal">🧠</div>
+                <div class="lesson-title">Философия</div>
+                <div class="lesson-subtitle">Философия 61 -120</div>
+                <button class="start-btn">Бастау ▶</button>
+            </div>
+
+            <div class="lesson-card" onclick="selectLesson('musaif4.txt', 'Философия', 'Философия')">
+                <div class="lesson-icon icon-teal">🧠</div>
+                <div class="lesson-title">Философия</div>
+                <div class="lesson-subtitle">Философия 121 -180</div>
+                <button class="start-btn">Бастау ▶</button>
+            </div>
+
+            <div class="lesson-card" onclick="selectLesson('musaif5.txt', 'Философия', 'Философия')">
+                <div class="lesson-icon icon-teal">🧠</div>
+                <div class="lesson-title">Философия</div>
+                <div class="lesson-subtitle">Философия 181 - 230</div>
                 <button class="start-btn">Бастау ▶</button>
             </div>
         </div>
@@ -367,8 +528,21 @@
             <div id="variants-container"></div>
             
             <div class="navigation">
-                <button class="nav-btn skip-btn" onclick="skipQuestion()">№</button>
-                <button class="nav-btn next-btn" onclick="nextQuestion()">Өту</button>
+                <button class="nav-btn skip-btn" onclick="openJumpModal()">№</button>
+                <button class="nav-btn skip-btn" id="prev-btn" onclick="previousQuestion()" style="display: none;">Алдыңғы</button>
+                <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()" disabled style="opacity: 0.5; cursor: not-allowed;">Келесі</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jump to Question Modal -->
+    <div id="jumpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Сұрақ нөмірін енгізіңіз</div>
+            <input type="number" id="jumpInput" class="modal-input" placeholder="1" min="1">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeJumpModal()">Болдырмау</button>
+                <button class="modal-btn modal-btn-primary" onclick="jumpToQuestion()">Өту</button>
             </div>
         </div>
     </div>
@@ -496,6 +670,40 @@
 
             container.appendChild(variantDiv);
         });
+
+        // Update button states
+        updateNavigationButtons();
+    }
+
+    function updateNavigationButtons() {
+        const q = questions[currentQuestionIndex];
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Show/hide previous button
+        if (prevBtn) {
+            prevBtn.style.display = currentQuestionIndex > 0 ? 'block' : 'none';
+        }
+
+        // Enable/disable next button based on whether question is answered
+        if (nextBtn) {
+            if (q.answered) {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = '1';
+                nextBtn.style.cursor = 'pointer';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+            }
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
     }
 
     function selectVariant(index, answer) {
@@ -527,6 +735,14 @@
         if (answer === q.correctAnswer) {
             correctAnswers++;
         }
+
+        // Enable next button after answering
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+            nextBtn.style.cursor = 'pointer';
+        }
     }
 
     function nextQuestion() {
@@ -542,20 +758,116 @@
         nextQuestion();
     }
 
+    function openJumpModal() {
+        const modal = document.getElementById('jumpModal');
+        const input = document.getElementById('jumpInput');
+        input.value = '';
+        input.max = questions.length;
+        modal.style.display = 'block';
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function closeJumpModal() {
+        document.getElementById('jumpModal').style.display = 'none';
+    }
+
+    function jumpToQuestion() {
+        const input = document.getElementById('jumpInput');
+        const questionNum = parseInt(input.value);
+        
+        if (questionNum >= 1 && questionNum <= questions.length) {
+            currentQuestionIndex = questionNum - 1;
+            closeJumpModal();
+            showQuestion();
+        } else {
+            alert(`Сұрақ нөмірі 1 мен ${questions.length} арасында болуы керек`);
+        }
+    }
+
+    // Close modal on Enter key
+    document.getElementById('jumpInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            jumpToQuestion();
+        }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('jumpModal');
+        if (event.target === modal) {
+            closeJumpModal();
+        }
+    }
+
     function showResults() {
         const percentage = Math.round((correctAnswers / questions.length) * 100);
+        
+        let encouragement = '';
+        if (percentage === 0) {
+            encouragement = 'Тағы да дайындалу керек 📚';
+        } else if (percentage < 50) {
+            encouragement = 'Жақсы әрекет! Тағы жаттығу керек 💪';
+        } else if (percentage < 80) {
+            encouragement = 'Жақсы нәтиже! 👍';
+        } else if (percentage < 100) {
+            encouragement = 'Өте жақсы! 🌟';
+        } else {
+            encouragement = 'Керемет! Барлық жауап дұрыс! 🎉';
+        }
         
         document.getElementById('question-screen').innerHTML = `
             <button class="back-btn" onclick="backToLessons()">← Артқа</button>
             <div class="results-card">
-                <div class="results-title">Тест Аяқталды! 🎉</div>
+                <div class="trophy-icon">🏆</div>
+                <div class="results-title">Тест аяқталды!</div>
+                <div class="results-subtitle">Сіздің нәтижеңіз:</div>
                 <div class="score">${correctAnswers} / ${questions.length}</div>
-                <div class="percentage">
-                    Дұрыс жауаптар: ${percentage}%
+                <div class="encouragement">${encouragement}</div>
+                <div class="results-buttons">
+                    <button class="restart-btn" onclick="restartQuiz()">🔄 Қайта тапсыру</button>
+                    <button class="home-btn" onclick="backToLessons()">🏠 Мәзір</button>
                 </div>
-                <button class="restart-btn" onclick="backToLessons()">Басты бетке оралу</button>
             </div>
         `;
+    }
+
+    function restartQuiz() {
+        if (questions.length > 0) {
+            currentQuestionIndex = 0;
+            answeredQuestions = 0;
+            correctAnswers = 0;
+            questions.forEach(q => {
+                q.answered = false;
+                q.userAnswer = null;
+            });
+            document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('question-screen').innerHTML = `
+                <button class="back-btn" onclick="backToLessons()">← Артқа</button>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="lesson-name" id="current-lesson-name">${currentLessonName.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    
+                    <div class="question-counter" id="question-counter">Сұрақ 1 / ${questions.length}</div>
+                    
+                    <div class="question-text" id="question-text"></div>
+                    
+                    <div id="variants-container"></div>
+                    
+                    <div class="navigation">
+                        <button class="nav-btn skip-btn" onclick="openJumpModal()">№</button>
+                        <button class="nav-btn skip-btn" id="prev-btn" onclick="previousQuestion()" style="display: none;">Алдыңғы</button>
+                        <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()" disabled style="opacity: 0.5; cursor: not-allowed;">Келесі</button>
+                    </div>
+                </div>
+            `;
+            showQuestion();
+        }
     }
 
     function backToLessons() {
