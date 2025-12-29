@@ -1,0 +1,860 @@
+<script src="firebase.js"></script>
+<script>
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "index.html";
+    }
+  });
+</script>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Таңдаңыз</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Lesson Selection Screen */
+        #lesson-screen {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .lesson-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .lesson-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        .icon-purple { background: #667eea; }
+        .icon-orange { background: #ff6b6b; }
+        .icon-teal { background: #4ecdc4; }
+
+        .lesson-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .lesson-subtitle {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 25px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Question Screen */
+        #question-screen {
+            display: none;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .lesson-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .question-counter {
+            color: #999;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .variant {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .variant:hover:not(.disabled) {
+            background: #f5f5f5;
+            border-color: #667eea;
+        }
+
+        .variant input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .variant label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1.05em;
+            color: #333;
+        }
+
+        .variant.correct {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+        }
+
+        .variant.incorrect {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+        }
+
+        .variant.disabled {
+            cursor: not-allowed;
+        }
+
+        .variant.disabled input {
+            cursor: not-allowed;
+        }
+
+        .variant.disabled label {
+            cursor: not-allowed;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .skip-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #e0e0e0;
+            flex: 1;
+        }
+
+        .skip-btn:hover {
+            background: #f5f5f5;
+            border-color: #667eea;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .trophy-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .results-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .encouragement {
+            font-size: 1.3em;
+            color: #ff9800;
+            margin-bottom: 30px;
+        }
+
+        .results-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .home-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal for Jump to Question */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-card {
+                padding: 25px;
+            }
+            
+            .main-title {
+                font-size: 1.8em;
+            }
+            
+            .question-text {
+                font-size: 1.2em;
+            }
+
+            .results-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Lesson Selection Screen -->
+    <div id="lesson-screen">
+        <h1 class="main-title">ТЕСТ ТАҢДАҢЫЗ 📚</h1>
+        <div class="lesson-grid">
+        
+            <div class="lesson-card" onclick="selectLesson('musaif.txt', 'Философия', 'Философия')">
+                <div class="lesson-icon icon-teal">🧠</div>
+                <div class="lesson-title">Философия</div>
+                <div class="lesson-subtitle">Философия</div>
+                <button class="start-btn">Бастау ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Screen -->
+    <div id="question-screen">
+        <button class="back-btn" onclick="backToLessons()">← Артқа</button>
+        
+        <div class="question-card">
+            <div class="question-header">
+                <span class="lesson-name" id="current-lesson-name">JAVA PROGRAMMING</span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="question-counter" id="question-counter">Сұрақ 1 / 89</div>
+            
+            <div class="question-text" id="question-text"></div>
+            
+            <div id="variants-container"></div>
+            
+            <div class="navigation">
+                <button class="nav-btn skip-btn" onclick="openJumpModal()">№</button>
+                <button class="nav-btn skip-btn" id="prev-btn" onclick="previousQuestion()" style="display: none;">Алдыңғы</button>
+                <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()" disabled style="opacity: 0.5; cursor: not-allowed;">Келесі</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jump to Question Modal -->
+    <div id="jumpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Сұрақ нөмірін енгізіңіз</div>
+            <input type="number" id="jumpInput" class="modal-input" placeholder="1" min="1">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeJumpModal()">Болдырмау</button>
+                <button class="modal-btn modal-btn-primary" onclick="jumpToQuestion()">Өту</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let selectedAnswer = null;
+    let answeredQuestions = 0;
+    let correctAnswers = 0;
+    let currentLessonName = '';
+
+    function shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    function parseTestData(data) {
+        const parsedQuestions = [];
+        const questionBlocks = data.trim().split('<question>').filter(block => block.trim() !== '');
+
+        questionBlocks.forEach(block => {
+            const parts = block.trim().split('<variant>');
+            const questionText = parts[0].trim();
+            const variants = parts.slice(1).map(v => v.trim());
+
+            if (questionText && variants.length > 0) {
+                const correctAnswer = variants[0];
+                const shuffledVariants = shuffleArray(variants);
+
+                parsedQuestions.push({
+                    text: questionText,
+                    variants: shuffledVariants,
+                    correctAnswer: correctAnswer,
+                    answered: false,
+                    userAnswer: null
+                });
+            }
+        });
+        return parsedQuestions;
+    }
+
+    async function selectLesson(filename, name, subtitle) {
+        currentLessonName = name;
+        
+        try {
+            const response = await fetch(filename);
+            if (!response.ok) throw new Error(`Статус: ${response.status}`);
+            
+            const rawText = await response.text();
+            questions = parseTestData(rawText);
+            
+            if (questions.length > 0) {
+                currentQuestionIndex = 0;
+                answeredQuestions = 0;
+                correctAnswers = 0;
+                document.getElementById('lesson-screen').style.display = 'none';
+                document.getElementById('question-screen').style.display = 'block';
+                document.getElementById('current-lesson-name').textContent = name.toUpperCase();
+                showQuestion();
+            } else {
+                alert('Вопросы не найдены в файле');
+            }
+        } catch (err) {
+            alert(`Ошибка загрузки: ${err.message}`);
+        }
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+
+        const q = questions[currentQuestionIndex];
+        selectedAnswer = null;
+
+        document.getElementById('question-counter').textContent = 
+            `Сұрақ ${currentQuestionIndex + 1} / ${questions.length}`;
+        
+        document.getElementById('question-text').textContent = 
+            `${currentQuestionIndex + 1}. ${q.text}`;
+
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-fill').style.width = progress + '%';
+
+        const container = document.getElementById('variants-container');
+        container.innerHTML = '';
+
+        q.variants.forEach((variant, index) => {
+            const variantDiv = document.createElement('div');
+            variantDiv.className = 'variant';
+            variantDiv.id = `variant-${index}`;
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'answer';
+            radio.id = `radio-${index}`;
+            radio.value = variant;
+
+            const label = document.createElement('label');
+            label.htmlFor = `radio-${index}`;
+            label.textContent = variant;
+
+            variantDiv.appendChild(radio);
+            variantDiv.appendChild(label);
+
+            variantDiv.onclick = function(e) {
+                if (!q.answered && !variantDiv.classList.contains('disabled')) {
+                    document.getElementById(`radio-${index}`).checked = true;
+                    selectVariant(index, variant);
+                }
+            };
+
+            radio.onclick = function(e) {
+                e.stopPropagation();
+                if (!q.answered) {
+                    selectVariant(index, variant);
+                }
+            };
+
+            container.appendChild(variantDiv);
+        });
+
+        // Update button states
+        updateNavigationButtons();
+    }
+
+    function updateNavigationButtons() {
+        const q = questions[currentQuestionIndex];
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Show/hide previous button
+        if (prevBtn) {
+            prevBtn.style.display = currentQuestionIndex > 0 ? 'block' : 'none';
+        }
+
+        // Enable/disable next button based on whether question is answered
+        if (nextBtn) {
+            if (q.answered) {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = '1';
+                nextBtn.style.cursor = 'pointer';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+            }
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
+    }
+
+    function selectVariant(index, answer) {
+        const q = questions[currentQuestionIndex];
+        
+        if (q.answered) return;
+
+        selectedAnswer = answer;
+        q.answered = true;
+        q.userAnswer = answer;
+
+        const allVariants = document.querySelectorAll('.variant');
+        allVariants.forEach(v => {
+            v.classList.add('disabled');
+            const input = v.querySelector('input');
+            if (input) input.disabled = true;
+        });
+
+        q.variants.forEach((variant, i) => {
+            const variantDiv = document.getElementById(`variant-${i}`);
+            if (variant === q.correctAnswer) {
+                variantDiv.classList.add('correct');
+            } else if (variant === answer && answer !== q.correctAnswer) {
+                variantDiv.classList.add('incorrect');
+            }
+        });
+
+        answeredQuestions++;
+        if (answer === q.correctAnswer) {
+            correctAnswers++;
+        }
+
+        // Enable next button after answering
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) {
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+            nextBtn.style.cursor = 'pointer';
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function skipQuestion() {
+        nextQuestion();
+    }
+
+    function openJumpModal() {
+        const modal = document.getElementById('jumpModal');
+        const input = document.getElementById('jumpInput');
+        input.value = '';
+        input.max = questions.length;
+        modal.style.display = 'block';
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function closeJumpModal() {
+        document.getElementById('jumpModal').style.display = 'none';
+    }
+
+    function jumpToQuestion() {
+        const input = document.getElementById('jumpInput');
+        const questionNum = parseInt(input.value);
+        
+        if (questionNum >= 1 && questionNum <= questions.length) {
+            currentQuestionIndex = questionNum - 1;
+            closeJumpModal();
+            showQuestion();
+        } else {
+            alert(`Сұрақ нөмірі 1 мен ${questions.length} арасында болуы керек`);
+        }
+    }
+
+    // Close modal on Enter key
+    document.getElementById('jumpInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            jumpToQuestion();
+        }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('jumpModal');
+        if (event.target === modal) {
+            closeJumpModal();
+        }
+    }
+
+    function showResults() {
+        const percentage = Math.round((correctAnswers / questions.length) * 100);
+        
+        let encouragement = '';
+        if (percentage === 0) {
+            encouragement = 'Тағы да дайындалу керек 📚';
+        } else if (percentage < 50) {
+            encouragement = 'Жақсы әрекет! Тағы жаттығу керек 💪';
+        } else if (percentage < 80) {
+            encouragement = 'Жақсы нәтиже! 👍';
+        } else if (percentage < 100) {
+            encouragement = 'Өте жақсы! 🌟';
+        } else {
+            encouragement = 'Керемет! Барлық жауап дұрыс! 🎉';
+        }
+        
+        document.getElementById('question-screen').innerHTML = `
+            <button class="back-btn" onclick="backToLessons()">← Артқа</button>
+            <div class="results-card">
+                <div class="trophy-icon">🏆</div>
+                <div class="results-title">Тест аяқталды!</div>
+                <div class="results-subtitle">Сіздің нәтижеңіз:</div>
+                <div class="score">${correctAnswers} / ${questions.length}</div>
+                <div class="encouragement">${encouragement}</div>
+                <div class="results-buttons">
+                    <button class="restart-btn" onclick="restartQuiz()">🔄 Қайта тапсыру</button>
+                    <button class="home-btn" onclick="backToLessons()">🏠 Мәзір</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function restartQuiz() {
+        if (questions.length > 0) {
+            currentQuestionIndex = 0;
+            answeredQuestions = 0;
+            correctAnswers = 0;
+            questions.forEach(q => {
+                q.answered = false;
+                q.userAnswer = null;
+            });
+            document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('question-screen').innerHTML = `
+                <button class="back-btn" onclick="backToLessons()">← Артқа</button>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="lesson-name" id="current-lesson-name">${currentLessonName.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    
+                    <div class="question-counter" id="question-counter">Сұрақ 1 / ${questions.length}</div>
+                    
+                    <div class="question-text" id="question-text"></div>
+                    
+                    <div id="variants-container"></div>
+                    
+                    <div class="navigation">
+                        <button class="nav-btn skip-btn" onclick="openJumpModal()">№</button>
+                        <button class="nav-btn skip-btn" id="prev-btn" onclick="previousQuestion()" style="display: none;">Алдыңғы</button>
+                        <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()" disabled style="opacity: 0.5; cursor: not-allowed;">Келесі</button>
+                    </div>
+                </div>
+            `;
+            showQuestion();
+        }
+    }
+
+    function backToLessons() {
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
