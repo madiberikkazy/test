@@ -2,20 +2,21 @@
 <html lang="kk">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Firebase</title>
   <style>
-    body { background: #667eea; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .box { background: white; padding: 30px; border-radius: 10px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-    h2 { text-align: center; color: #333; }
-    input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
-    button { background: #667eea; color: white; border: none; cursor: pointer; font-weight: bold; }
+    body { background: #667eea; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .box { background: white; padding: 30px; border-radius: 10px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    h2 { text-align: center; margin-bottom: 20px; color: #333; }
+    input { width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; margin-top: 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
     button:hover { background: #5a6fd6; }
   </style>
 </head>
 <body>
 
 <div class="box">
-  <h2>Кіру</h2>
+  <h2>Жүйеге кіру</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Пароль">
   <button id="loginBtn">Кіру</button>
@@ -24,15 +25,19 @@
 <script type="module">
   import { auth, signInWithEmailAndPassword } from './firebase.js';
 
-  document.getElementById("loginBtn").addEventListener("click", () => {
+  document.getElementById("loginBtn").addEventListener("click", async () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        window.location.href = "test.html";
-      })
-      .catch(err => alert("Қате: " + err.message));
+    if(!email || !password) return alert("Деректерді толтырыңыз!");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // GitHub Pages-те сілтеме дұрыс болуы үшін
+      window.location.href = "test.html"; 
+    } catch (err) {
+      alert("Қате: " + err.message);
+    }
   });
 </script>
 
