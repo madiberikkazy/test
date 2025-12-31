@@ -4,30 +4,10 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <style>
-    body {
-      background: #667eea;
-      font-family: Arial;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 300px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    button {
-      background: #667eea;
-      color: white;
-      border: none;
-    }
+    body { background: #667eea; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .box { background: white; padding: 30px; border-radius: 10px; width: 300px; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; }
+    button { background: #667eea; color: white; border: none; }
   </style>
 </head>
 <body>
@@ -39,19 +19,20 @@
   <button onclick="login()">Кіру</button>
 </div>
 
-<script src="firebase.js"></script>
+<script type="module">
+  import { auth, signInWithEmailAndPassword } from './firebase.js';
 
-<script>
-  function login() {
-    const email = email.value;
-    const password = password.value;
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(() => {
-        window.location.href = "test.html";
-      })
+  window.login = function() {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => window.location.href = "test.html")
       .catch(err => alert("Қате: " + err.message));
-  }
+  };
 </script>
 
 </body>
