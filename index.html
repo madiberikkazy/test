@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <style>
-    body { background: #667eea; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .box { background: white; padding: 30px; border-radius: 10px; width: 300px; }
-    input, button { width: 100%; padding: 10px; margin-top: 10px; }
-    button { background: #667eea; color: white; border: none; }
+    body { background: #667eea; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .box { background: white; padding: 30px; border-radius: 10px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    h2 { text-align: center; color: #333; }
+    input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; }
+    button { background: #667eea; color: white; border: none; cursor: pointer; font-weight: bold; }
+    button:hover { background: #5a6fd6; }
   </style>
 </head>
 <body>
@@ -16,23 +18,22 @@
   <h2>Кіру</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Пароль">
-  <button onclick="login()">Кіру</button>
+  <button id="loginBtn">Кіру</button>
 </div>
 
 <script type="module">
   import { auth, signInWithEmailAndPassword } from './firebase.js';
 
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-
-  window.login = function() {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => window.location.href = "test.html")
+      .then(() => {
+        window.location.href = "test.html";
+      })
       .catch(err => alert("Қате: " + err.message));
-  };
+  });
 </script>
 
 </body>
